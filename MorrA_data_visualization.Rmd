@@ -1,0 +1,291 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+name: Ashley Morris
+---
+
+#Data Visualisation  
+
+```{r}
+library(tidyverse)
+#> ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+#> ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
+#> ✔ tibble  2.1.3     ✔ dplyr   0.8.3
+#> ✔ tidyr   1.0.0     ✔ stringr 1.4.0
+#> ✔ readr   1.3.1     ✔ forcats 0.4.0
+#> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+#> ✖ dplyr::filter() masks stats::filter()
+#> ✖ dplyr::lag()    masks stats::lag()
+```
+
+```{r}
+mpg
+#> # A tibble: 234 x 11
+#>   manufacturer model displ  year   cyl trans      drv     cty   hwy fl    class 
+#>   <chr>        <chr> <dbl> <int> <int> <chr>      <chr> <int> <int> <chr> <chr> 
+#> 1 audi         a4      1.8  1999     4 auto(l5)   f        18    29 p     compa…
+#> 2 audi         a4      1.8  1999     4 manual(m5) f        21    29 p     compa…
+#> 3 audi         a4      2    2008     4 manual(m6) f        20    31 p     compa…
+#> 4 audi         a4      2    2008     4 auto(av)   f        21    30 p     compa…
+#> 5 audi         a4      2.8  1999     6 auto(l5)   f        16    26 p     compa…
+#> 6 audi         a4      2.8  1999     6 manual(m5) f        18    26 p     compa…
+#> # … with 228 more rows
+```
+
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+##3.2 
+
+**Question**Let’s use our first graph to answer a question: Do cars with big engines use more fuel than cars with small engines? You probably already have an answer, but try to make your answer precise. What does the relationship between engine size and fuel efficiency look like? Is it positive? Negative? Linear? Nonlinear?
+
+**Answer** There is a negative relationship between engine size and fuel efficiency. The bigger the engine, the more fuel it uses. 
+
+Addind different layer to your graph helps make it more useful. 
+
+
+##Exercise 3.2.4
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+?mpg
+```
+1. A graph of the mpg data is graphed.  
+2. There are 234 rows and 11 columns in the mpg dataframe  
+3. From reading the ?mpg, drv describes front wheel drive=f, rear wheel drive=r,  and 4wd=4.  
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = class, y = drv))
+```
+5. Making a graph of class vs. drv only tells us which cars have what drive, nothing about the fuel efficency like we want.  
+
+##3.3 
+The cars outside of the liner trend seem to be racecar type cars that have bigger engines but still decent fuel efficency too.  
+
+By adding an asesthtic it gives a different "level" to the graph.  
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+```
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))
+#> Warning: Using size for a discrete variable is not advised.
+```
+
+
+```{r}
+# Left
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+
+# Right
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+```
+
+
+ggplot2 will only use 6 variables when graphing different catagories, as seen above the suv does not have a shape.
+
+To set the aesthetic by names as an argument of your geom function the name goes outside of aes()
+
+##Exercises 3.3.1
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+mpg
+```
+1. The points weren't blue because the aesthetic was inside the aes().
+2. Catagorical-- class,fl,drv, trans, model, and  manufacturer 
+Continuous-- year, cyl, cty, hwy(this is  found under the title of the different variables)
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = hwy))
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+```
+3. A continuous varaible can not be graphed to size while a categorical can.  
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class, size=class))
+```
+4. Both aesthetics are graphed.  
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, stroke = hwy))
+```
+5. The stoke aesthetic creates an unreadable graph, doesn't seem very useful. It only works with non-numeric variables.  
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color=displ < 5))
+```
+6. Whdn arranging color and when disp<5 is shown above. It is colored by if the <5 was true or not. 
+
+##3.4 Common Problems  
+Be sure to add the + after the first line of code, not before the second when write code for ggplot  
+
+##3.5 Facets  
+Facets are subplots that each display one subset of the data.  
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+```
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_grid(drv ~ cyl)
+```
+
+## 3.5.1 Exercises  
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ hwy, nrow = 2)
+```
+1. When a facet is used on a continuous variable, the graph doen't display useful information.   
+
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = drv, y = cyl))
+```
+2. This plot is simular to plot from problem #1 where it is an unuseful plot for how it is being graphed.  
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(drv ~ .)
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(. ~ cyl)
+```
+
+3. The code makes a facet graph, the first code being with horizontal(rows) facet and the second is vertical (columns).  
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+?facet_wrap
+```
+4. You are able to see the indivicual groups of cars and how they would plot instead of trying to distinguish the difference between the colors when graphed.This may be difficult to read, and it could possibly change with a larger dataset by creating more facets.  
+
+5. nrow gives the number of rows, and ncol gives the number of columns. This may be useful if you only want to graph a certain amount of rows or columns.  
+
+6. By putting the more unique levels in the columns you recieve a better to read graph.  
+
+##3.6 Geometric objects  
+
+```{r}
+# left
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+# right
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+```
+
+The two plots have simular patterns, but different objects representing the data.  
+
+```{r}
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
+```
+
+```{r}
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+              
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv))
+    
+ggplot(data = mpg) +
+  geom_smooth(
+    mapping = aes(x = displ, y = hwy, color = drv),
+    show.legend = FALSE
+  )
+```
+
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+```
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+```
+
+
+
+
+##Exercise 3.6.1  
+1. line- line geoms, boxplots-- boxplot geoms and histograms-- histogram geoms  
+
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)+ 
+ geom_smooth(show.legend=FALSE) 
+```
+2. This is what I predicted.  
+
+3. The darker shaded gray area is present when show.legend = FALSE is in the code. You are better able to see the data trends.  
+
+4. I didn't notice a difference.  
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
+
+5. No, they look the same because they have the same code  chunk just in different forms.  
+
+##3.7.1 Exercises  
+1. The default is the x and y variable and axis. You could instead use aes(). 
+
+
+2. I don't know, couldn't get the code chunk with geom_col to work.    
+
+
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, y = ..prop..))
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = color, y = ..prop..))
+```
+The legend is stated by letters, not giving a good reading for the graph, and the first graph is all one collor, so there is no way of reading the graph.  
+
+
+
+
+
+
+
+
+
